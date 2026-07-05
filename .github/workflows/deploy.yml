@@ -11,11 +11,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Deploy to public repository
-        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.TOKEN }}
-          repository-name: zlownet/Sungard-Minecraft-Server
-          branch: main
-          folder: .
+          fetch-depth: 0 # Важно: скачивает всю историю коммитов, а не только последний
+
+      - name: Push to public repository
+        env:
+          TARGET_REPO: zlownet/Sungard-Minecraft-Server
+        run: |
+          # Добавляем публичный репозиторий как удаленный (remote)
+          git remote add public https://x-access-token:${{ secrets.TOKEN }}@github.com/$TARGET_REPO.git
+          
+          # Отправляем изменения в ветку main (force-push синхронизирует истории)
+          git push public main --force
