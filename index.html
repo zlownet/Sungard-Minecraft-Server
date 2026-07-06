@@ -280,6 +280,52 @@
       margin-top: 80px;
     }
 
+    /* Updates Section */
+    .updates {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+    .updates-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 40px;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .update-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 20px 30px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      transition: var(--transition-smooth);
+      backdrop-filter: blur(10px);
+    }
+    .update-item:hover {
+      border-color: var(--color-accent);
+      transform: translateX(5px);
+    }
+    .update-date {
+      font-weight: 600;
+      color: var(--color-accent);
+      min-width: 100px;
+      font-size: 0.9rem;
+    }
+    .update-content h4 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      color: var(--color-text-main);
+    }
+    .update-content p {
+      font-size: 0.9rem;
+      color: var(--color-text-accent);
+    }
+
     .socials {
       display: flex;
       justify-content: center;
@@ -384,6 +430,13 @@
     </div>
   </section>
 
+  <section class="updates animate-fade">
+    <h2 class="updates-title">Последние обновления</h2>
+    <div id="updates-container">
+      <p style="text-align: center; color: var(--color-text-accent);">Загрузка обновлений...</p>
+    </div>
+  </section>
+
   <section class="community animate-fade">
     <div class="discord-widget">
       <h2 style="margin-bottom: 15px; font-size: 1.8rem;">Станьте частью семьи</h2>
@@ -391,6 +444,35 @@
       <a href="https://discord.gg/VJhnM9DdE8" target="_blank" class="btn btn-primary">Вступить в Discord</a>
     </div>
   </section>
+
+  <script>
+    async function loadUpdates() {
+      const container = document.getElementById('updates-container');
+      try {
+        const response = await fetch('updates.json');
+        if (!response.ok) throw new Error('Failed to load updates');
+        const updates = await response.json();
+        
+        container.innerHTML = '';
+        updates.forEach(update => {
+          const item = document.createElement('div');
+          item.className = 'update-item';
+          item.innerHTML = `
+            <div class="update-date">${update.date}</div>
+            <div class="update-content">
+              <h4>${update.title}</h4>
+              <p>${update.text}</p>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      } catch (error) {
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-accent);">Не удалось загрузить обновления</p>';
+        console.error(error);
+      }
+    }
+    window.addEventListener('DOMContentLoaded', loadUpdates);
+  </script>
 
   <footer>
     <div class="socials">
