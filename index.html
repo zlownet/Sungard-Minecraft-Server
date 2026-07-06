@@ -449,11 +449,17 @@
     async function loadUpdates() {
       const container = document.getElementById('updates-container');
       try {
-        const response = await fetch('updates.json');
+        // Добавляем метку времени (timestamp), чтобы браузер не кэшировал файл
+        const response = await fetch('updates.json?t=' + Date.now());
         if (!response.ok) throw new Error('Failed to load updates');
         const updates = await response.json();
         
         container.innerHTML = '';
+        if (updates.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: var(--color-text-accent);">Обновлений пока нет</p>';
+          return;
+        }
+
         updates.forEach(update => {
           const item = document.createElement('div');
           item.className = 'update-item';
@@ -468,7 +474,7 @@
         });
       } catch (error) {
         container.innerHTML = '<p style="text-align: center; color: var(--color-text-accent);">Не удалось загрузить обновления</p>';
-        console.error(error);
+        console.error('Error loading updates:', error);
       }
     }
     window.addEventListener('DOMContentLoaded', loadUpdates);
